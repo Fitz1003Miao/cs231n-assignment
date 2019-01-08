@@ -212,7 +212,5 @@ def softmax_loss_vectorized(W, X, y, reg):
     return loss, dW
 ```
 
-## Features
-
 
 

@@ -76,7 +76,6 @@ class TwoLayerNet(object):
     # Store the result in the scores variable, which should be an array of      #
     # shape (N, C).                                                             #
     #############################################################################
-    # pass
     out1 = np.maximum(np.dot(X, W1) + b1, 0)
     out2 = np.dot(out1, W2) + b2
     scores = out2

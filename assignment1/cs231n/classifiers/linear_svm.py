@@ -68,40 +68,55 @@ def svm_loss_vectorized(W, X, y, reg):
   loss = 0.0
   dW = np.zeros(W.shape) # initialize the gradient as zero
 
-  #############################################################################
-  # TODO:                                                                     #
-  # Implement a vectorized version of the structured SVM loss, storing the    #
-  # result in loss.                                                           #
-  #############################################################################
-  N = X.shape[0]
-  scores = np.dot(X, W) #(N, C)
-  correct_scores = scores[list(np.arange(N)), y]
-  loss = (np.sum(np.maximum((scores - correct_scores.reshape(-1, 1) + 1), 0))- N) / N + reg * np.sum(W * W)
+  # #############################################################################
+  # # TODO:                                                                     #
+  # # Implement a vectorized version of the structured SVM loss, storing the    #
+  # # result in loss.                                                           #
+  # #############################################################################
+  # N = X.shape[0]
+  # scores = np.dot(X, W) #(N, C)
+  # correct_scores = scores[list(np.arange(N)), y]
+  # loss = (np.sum(np.maximum((scores - correct_scores.reshape(-1, 1) + 1), 0))- N) / N + reg * np.sum(W * W)
   
-  #############################################################################
-  #                             END OF YOUR CODE                              #
-  #############################################################################
+  # #############################################################################
+  # #                             END OF YOUR CODE                              #
+  # #############################################################################
 
 
-  #############################################################################
-  # TODO:                                                                     #
-  # Implement a vectorized version of the gradient for the structured SVM     #
-  # loss, storing the result in dW.                                           #
-  #                                                                           #
-  # Hint: Instead of computing the gradient from scratch, it may be easier    #
-  # to reuse some of the intermediate values that you used to compute the     #
-  # loss.                                                                     #
-  #############################################################################
-  # pass
+  # #############################################################################
+  # # TODO:                                                                     #
+  # # Implement a vectorized version of the gradient for the structured SVM     #
+  # # loss, storing the result in dW.                                           #
+  # #                                                                           #
+  # # Hint: Instead of computing the gradient from scratch, it may be easier    #
+  # # to reuse some of the intermediate values that you used to compute the     #
+  # # loss.                                                                     #
+  # #############################################################################
+  # # pass
 
-  X_mask = np.zeros(scores.shape)
-  X_mask[np.maximum((scores - correct_scores.reshape(-1, 1) + 1), 0) > 0] = 1
-  X_mask[list(np.arange(N)), y] = 0
-  X_mask[list(np.arange(N)), y] = -np.sum(X_mask, axis = 1)
-  dW = np.dot(X.T, X_mask) / N + 2 * reg * W
+  # X_mask = np.zeros(scores.shape)
+  # X_mask[np.maximum((scores - correct_scores.reshape(-1, 1) + 1), 0) > 0] = 1
+  # X_mask[list(np.arange(N)), y] = 0
+  # X_mask[list(np.arange(N)), y] = -np.sum(X_mask, axis = 1)
+  # dW = np.dot(X.T, X_mask) / N + 2 * reg * W
   
-  #############################################################################
-  #                             END OF YOUR CODE                              #
-  #############################################################################
+  # #############################################################################
+  # #                             END OF YOUR CODE                              #
+  # #############################################################################
+
+  # return loss, dW
+  num = X.shape[0]
+  num_classes = W.shape[1]
+  
+  dW = np.zeros_like(W)
+  scores = np.dot(X, W)
+  correct_scores = scores[list(np.arange(num)), y].reshape(-1, 1)
+  loss = (np.sum(np.maximum(scores - correct_scores + 1, 0)) - num) / num + reg * np.sum(W * W)
+  
+  X_mask = np.zeros_like(scores)
+  X_mask[(scores - correct_scores + 1) > 0] = 1
+  X_mask[list(np.arange(num)), y] -= 1
+  X_mask[list(np.arange(num)), y] = -np.sum(X_mask, axis = 1)
+  dW = np.dot(X.T, X_mask) / num + 2 * reg * W
 
   return loss, dW
